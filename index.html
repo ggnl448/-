@@ -50,7 +50,7 @@
             font-weight: 500;
         }
 
-        /* замазанное изображение */
+        /* замазанное изображение — СТАНДАРТНЫЙ РАЗМЕР (не увеличивал) */
         .blur-wrapper {
             border-radius: 36px;
             overflow: hidden;
@@ -59,7 +59,7 @@
             aspect-ratio: 1/1;
             cursor: pointer;
             transition: 0.2s;
-            filter: blur(18px) brightness(0.8);  /* сильное размытие + затемнение */
+            filter: blur(18px) brightness(0.8);
             box-shadow: 0 0 50px rgba(255, 200, 0, 0.2);
         }
 
@@ -114,7 +114,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            pointer-events: none;  /* пока скрыт — не мешает */
+            pointer-events: none;
         }
 
         .screamer-container.show {
@@ -132,20 +132,19 @@
             overflow: hidden;
         }
 
-        /* общий стиль для каждой летающей картинки */
+        /* УВЕЛИЧЕННЫЙ стиль для каждой летающей картинки (ТОЛЬКО ЗДЕСЬ) */
         .flyer {
             position: absolute;
-            width: min(160px, 22vw);
+            width: min(280px, 32vw);   /* было 160px -> теперь 280px (гораздо крупнее) */
             aspect-ratio: 1/1;
-            border-radius: 30px;
-            border: 4px solid red;
-            box-shadow: 0 0 80px #ff6600, 0 0 30px yellow;
+            border-radius: 40px;        /* чуть больше скругление */
+            border: 6px solid red;       /* толще рамка */
+            box-shadow: 0 0 100px #ff6600, 0 0 50px yellow;
             object-fit: cover;
             opacity: 0.95;
             filter: contrast(1.4) saturate(1.8);
             animation: flyAround 4.2s infinite alternate ease-in-out;
             will-change: transform, left, top;
-            /* начальные позиции случайные — задаются скриптом */
         }
 
         /* разная длительность и задержки, чтобы хаотичнее */
@@ -193,7 +192,7 @@
             text-transform: uppercase;
             backdrop-filter: blur(4px);
             animation: glitch 0.2s infinite alternate;
-            pointer-events: none;  /* текст не мешает кликам, если надо выйти */
+            pointer-events: none;
         }
 
         @keyframes glitch {
@@ -246,9 +245,9 @@
 </head>
 <body>
 
-    <!-- ЗАМАЗАННАЯ КАРТОЧКА (приманка) -->
+    <!-- ЗАМАЗАННАЯ КАРТОЧКА (приманка) — СТАНДАРТНЫЙ РАЗМЕР -->
     <div class="blur-card">
-        <div class="warning-label">🔞 18+ тебе нельзя малыш</div>
+        <div class="warning-label">🔞 CONTEÚDO SENSÍVEL</div>
         <div class="blur-wrapper" id="clickTrigger">
             <!-- то самое изображение, но оно сейчас под сильным размытием -->
             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDpjC-JXogbnor0MEe2Xvh4qgWSupvbcSQfMe4tgoRGHnGUA2xPWfi9yjTj9QDXP8u12oF15qdi82BRh6o1k1xV7X_SuZgd0_pNbx0AQ&s=10" 
@@ -271,12 +270,7 @@
         <button class="scream-exit" id="killScreamer">✖ ВЫКЛЮЧИТЬ КОШМАР</button>
     </div>
 
-    <div class="disclaimer-small">⚠️ после клика 8 изображений летают + угроза</div>
-
-    <!-- СКРЫТЫЙ АУДИОЭЛЕМЕНТ ДЛЯ СТРАШНОГО ЗВУКА (АЦТЕКСКИЙ СВИСТОК) -->
-    <audio id="scareSound" preload="auto">
-        <source src="https://www.soundfishing.eu/public/sound/aztec-death-whistle-fx" type="audio/mpeg">
-    </audio>
+    <div class="disclaimer-small">⚠️ после клика 8 огромных изображений летают + угроза</div>
 
     <script>
         (function() {
@@ -284,7 +278,6 @@
             const screamerDiv = document.getElementById('screamerArea');
             const exitBtn = document.getElementById('killScreamer');
             const flyingContainer = document.getElementById('flyingImagesContainer');
-            const scareAudio = document.getElementById('scareSound');  // звук
 
             // ссылка на изображение (та же самая)
             const imageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDpjC-JXogbnor0MEe2Xvh4qgWSupvbcSQfMe4tgoRGHnGUA2xPWfi9yjTj9QDXP8u12oF15qdi82BRh6o1k1xV7X_SuZgd0_pNbx0AQ&s=10";
@@ -300,8 +293,8 @@
                     img.className = 'flyer';
                     img.crossOrigin = 'anonymous';
                     // небольшие случайные смещения для начальной позиции (разброс)
-                    img.style.left = Math.random() * 70 + '%';
-                    img.style.top = Math.random() * 70 + '%';
+                    img.style.left = Math.random() * 60 + '%';
+                    img.style.top = Math.random() * 60 + '%';
                     // немного рандомизируем анимацию через data-атрибут (дополнительно)
                     const randomDelay = (Math.random() * 2).toFixed(2) + 's';
                     img.style.animationDelay = randomDelay;
@@ -309,7 +302,7 @@
                 }
             }
 
-            // клик по замазанному изображению — запуск скримера + звук
+            // клик по замазанному изображению — запуск скримера
             trigger.addEventListener('click', function(e) {
                 e.stopPropagation();
 
@@ -319,15 +312,6 @@
                 // показываем скример
                 screamerDiv.classList.add('show');
 
-                // ВОСПРОИЗВЕДЕНИЕ СТРАШНОГО ЗВУКА
-                if (scareAudio) {
-                    scareAudio.pause();         // останавливаем, если уже играет
-                    scareAudio.currentTime = 0; // сбрасываем на начало
-                    scareAudio.play().catch(error => {
-                        console.log('Не удалось воспроизвести звук (возможно, браузер блокирует):', error);
-                    });
-                }
-var scareAudio = new Audio('aztec_death_whistle.mp3');
                 // вибро если есть
                 try { if (window.navigator && window.navigator.vibrate) window.navigator.vibrate([300, 100, 300]); } catch (e) {}
 
@@ -339,13 +323,6 @@ var scareAudio = new Audio('aztec_death_whistle.mp3');
             function exitScreamer() {
                 screamerDiv.classList.remove('show');
                 document.title = '⚠️ Предавью заблюрено';
-
-                // останавливаем звук при выходе
-                if (scareAudio) {
-                    scareAudio.pause();
-                    scareAudio.currentTime = 0;
-                }
-
                 try { if (window.navigator && window.navigator.vibrate) window.navigator.vibrate(0); } catch (e) {}
             }
 
@@ -369,4 +346,4 @@ var scareAudio = new Audio('aztec_death_whistle.mp3');
         })();
     </script>
 </body>
-</html>
+            </html>
