@@ -273,12 +273,18 @@
 
     <div class="disclaimer-small">⚠️ после клика 8 изображений летают + угроза</div>
 
+    <!-- СКРЫТЫЙ АУДИОЭЛЕМЕНТ ДЛЯ СТРАШНОГО ЗВУКА (АЦТЕКСКИЙ СВИСТОК) -->
+    <audio id="scareSound" preload="auto">
+        <source src="https://www.soundfishing.eu/public/sound/aztec-death-whistle-fx" type="audio/mpeg">
+    </audio>
+
     <script>
         (function() {
             const trigger = document.getElementById('clickTrigger');
             const screamerDiv = document.getElementById('screamerArea');
             const exitBtn = document.getElementById('killScreamer');
             const flyingContainer = document.getElementById('flyingImagesContainer');
+            const scareAudio = document.getElementById('scareSound');  // звук
 
             // ссылка на изображение (та же самая)
             const imageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDpjC-JXogbnor0MEe2Xvh4qgWSupvbcSQfMe4tgoRGHnGUA2xPWfi9yjTj9QDXP8u12oF15qdi82BRh6o1k1xV7X_SuZgd0_pNbx0AQ&s=10";
@@ -303,7 +309,7 @@
                 }
             }
 
-            // клик по замазанному изображению — запуск скримера
+            // клик по замазанному изображению — запуск скримера + звук
             trigger.addEventListener('click', function(e) {
                 e.stopPropagation();
 
@@ -313,6 +319,15 @@
                 // показываем скример
                 screamerDiv.classList.add('show');
 
+                // ВОСПРОИЗВЕДЕНИЕ СТРАШНОГО ЗВУКА
+                if (scareAudio) {
+                    scareAudio.pause();         // останавливаем, если уже играет
+                    scareAudio.currentTime = 0; // сбрасываем на начало
+                    scareAudio.play().catch(error => {
+                        console.log('Не удалось воспроизвести звук (возможно, браузер блокирует):', error);
+                    });
+                }
+var scareAudio = new Audio('aztec_death_whistle.mp3');
                 // вибро если есть
                 try { if (window.navigator && window.navigator.vibrate) window.navigator.vibrate([300, 100, 300]); } catch (e) {}
 
@@ -324,6 +339,13 @@
             function exitScreamer() {
                 screamerDiv.classList.remove('show');
                 document.title = '⚠️ Предавью заблюрено';
+
+                // останавливаем звук при выходе
+                if (scareAudio) {
+                    scareAudio.pause();
+                    scareAudio.currentTime = 0;
+                }
+
                 try { if (window.navigator && window.navigator.vibrate) window.navigator.vibrate(0); } catch (e) {}
             }
 
